@@ -1,0 +1,16 @@
+# git打包时忽略的文件
+# Dependencies
+node_modules
+
+# yarn error logs
+yarn-error.log
+
+# Environment varibales
+.env*
+!.env*.example
+
+# Code coverage
+coverage
+
+# .history
+.history
