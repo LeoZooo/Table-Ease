@@ -1,13 +1,9 @@
-// 用于验证环境文件.env
-// 参考资料 https://juejin.cn/post/6915344646415761421
 const dotenv = require('dotenv');
 const path = require('path');
 const Joi = require('joi');
 
-// 通过配置dotenv，我们可以直接从process.env下引入配置文件，避免了信息泄露，利于代码维护
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
-// 验证环境配置表，joi是javaScript最强大的模式描述语言和数据验证器。
 const envVarsSchema = Joi.object()
   .keys({
     NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
@@ -28,7 +24,6 @@ const envVarsSchema = Joi.object()
     SMTP_PASSWORD: Joi.string().description('password for email server'),
     EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),
   })
-  // unkown方法保证了允许其他值的出现，我们使用这个方法是因为；process.env中有几十个环境变量被我们的操作系统或其他程序使用。所以如果我们不使用这个方法，joi会抛出一个错误。
   .unknown();
 
 const { value: envVars, error } = envVarsSchema.prefs({ errors: { label: 'key' } }).validate(process.env);

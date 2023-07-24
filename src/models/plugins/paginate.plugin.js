@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 
-// 自定义的mongoDB分页查询
 const paginate = (schema) => {
   /**
    * @typedef {Object} QueryResult

@@ -49,6 +49,18 @@ const verifyEmail = {
   }),
 };
 
+const updateProfile = {
+  query: Joi.object().keys({
+    token: Joi.string().required(),
+  }),
+  body: Joi.object()
+    .keys({
+      gender: Joi.number(),
+      role: Joi.string(),
+    })
+    .min(1),
+};
+
 module.exports = {
   register,
   login,
@@ -57,4 +69,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   verifyEmail,
+  updateProfile,
 };

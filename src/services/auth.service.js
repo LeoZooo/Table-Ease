@@ -90,10 +90,32 @@ const verifyEmail = async (verifyEmailToken) => {
   }
 };
 
+/**
+ * Update profile
+ * @param {string} accessToken
+ * @param {string} gender
+ * @param {string} role
+ * @returns {Promise<User>}
+ */
+const updateProfile = async (verifyAccessToken, updateBody) => {
+  try {
+    const verifyAccessTokenDoc = await tokenService.verifyToken(verifyAccessToken, tokenTypes.ACCESS);
+    const user = await userService.getUserById(verifyAccessTokenDoc.user);
+
+    if (!user || !updateBody) {
+      throw new Error();
+    }
+    return await userService.updateUserById(user.id, updateBody);
+  } catch (error) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'User verification failed');
+  }
+};
+
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
   refreshAuth,
   resetPassword,
   verifyEmail,
+  updateProfile,
 };

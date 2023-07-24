@@ -15,7 +15,18 @@ const password = (value, helpers) => {
   return value;
 };
 
+const restaurantToken = (value, helpers) => {
+  if (value.length !== 6) {
+    return helpers.message('token must be a six-digit number');
+  }
+  if (!value.match(/^[0-9]+$/)) {
+    return helpers.message('token must be a number string');
+  }
+  return value;
+};
+
 module.exports = {
   objectId,
   password,
+  restaurantToken,
 };
