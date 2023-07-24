@@ -1,7 +1,10 @@
 const fs = require('fs');
 const path = require('path');
+const dotenv = require('dotenv');
 
-const filePath = path.join(__dirname, '../../verfication-code.txt');
+const filePath = path.join(__dirname, '../../.env');
+
+dotenv.config({ path: filePath });
 
 const generateRandomCode = (length) => {
   const characters = '0123456789';
@@ -17,7 +20,10 @@ const saveVerificationCodeToEnvFile = () => {
   const newCode = generateRandomCode(6);
   process.env.VERIFICATION_CODE = newCode;
 
-  fs.writeFileSync(filePath, newCode, { flag: 'w' });
+  const existingEnvData = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : '';
+  const updatedEnvData = existingEnvData.replace(/^VERIFICATION_CODE=.*/m, `VERIFICATION_CODE=${newCode}`);
+
+  fs.writeFileSync(filePath, updatedEnvData);
 
   // Auto change the verfication code every 12 hours.
   setTimeout(saveVerificationCodeToEnvFile, 1000 * 60 * 60 * 12);
@@ -26,11 +32,7 @@ const saveVerificationCodeToEnvFile = () => {
 saveVerificationCodeToEnvFile();
 
 const getVerificationCode = () => {
-  if (fs.existsSync(filePath)) {
-    const code = fs.readFileSync(filePath, 'utf8');
-    return code;
-  }
-  return null;
+  return process.env.VERIFICATION_CODE || null;
 };
 
 module.exports = getVerificationCode;

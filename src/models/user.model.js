@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
+const { atLeastOneNumber, onlyNumber } = require('../utils/constantRegx');
 
 const userSchema = mongoose.Schema(
   {
@@ -28,7 +29,7 @@ const userSchema = mongoose.Schema(
       trim: true,
       minlength: 8,
       validate(value) {
-        if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
+        if (!value.match(atLeastOneNumber) || !value.match(onlyNumber)) {
           throw new Error('Password must contain at least one letter and one number');
         }
       },

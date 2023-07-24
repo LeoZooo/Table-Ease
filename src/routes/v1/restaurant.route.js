@@ -73,7 +73,7 @@ module.exports = router;
  *             schema:
  *                $ref: '#/components/schemas/User'
  *       "400":
- *          $ref: '#/components/responses/DuplicateEmail'
+ *          $ref: '#/components/responses/BodyInfoError'
  *       "401":
  *          $ref: '#/components/responses/Unauthorized'
  */
@@ -121,7 +121,7 @@ module.exports = router;
  *             schema:
  *                $ref: '#/components/schemas/Restaurant'
  *       "400":
- *         $ref: '#/components/responses/DuplicateEmail'
+ *         $ref: '#/components/responses/BodyInfoError'
  *       "401":
  *          $ref: '#/components/responses/Unauthorized'
  */
@@ -143,9 +143,11 @@ module.exports = router;
  *         description: The verify access token
  *     responses:
  *       "204":
- *         description: Successful deleted
+ *         description: No Content
+ *       "400":
+ *         $ref: '#/components/responses/BodyInfoError'
  *       "401":
- *          $ref: '#/components/responses/Unauthorized'
+ *         $ref: '#/components/responses/Unauthorized'
  */
 
 /**
@@ -193,6 +195,8 @@ module.exports = router;
  *           application/json:
  *             schema:
  *                $ref: '#/components/schemas/User'
+ *       "400":
+ *          $ref: '#/components/responses/BodyInfoError'
  *       "401":
  *          $ref: '#/components/responses/Unauthorized'
  */
@@ -244,6 +248,8 @@ module.exports = router;
  *           application/json:
  *             schema:
  *                $ref: '#/components/schemas/User'
+ *       "400":
+ *          $ref: '#/components/responses/BodyInfoError'
  *       "401":
  *          $ref: '#/components/responses/Unauthorized'
  */
@@ -273,6 +279,8 @@ module.exports = router;
  *     responses:
  *       "204":
  *         description: Successful deleted
+ *       "400":
+ *          $ref: '#/components/responses/BodyInfoError'
  *       "401":
  *          $ref: '#/components/responses/Unauthorized'
  */

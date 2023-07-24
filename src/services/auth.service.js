@@ -42,7 +42,7 @@ const refreshAuth = async (refreshToken) => {
     const refreshTokenDoc = await tokenService.verifyToken(refreshToken, tokenTypes.REFRESH);
     const user = await userService.getUserById(refreshTokenDoc.user);
     if (!user) {
-      throw new Error();
+      throw new ApiError(httpStatus.BAD_REQUEST, 'user procession failed');
     }
     await refreshTokenDoc.remove();
     return tokenService.generateAuthTokens(user);
@@ -62,7 +62,7 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
     const resetPasswordTokenDoc = await tokenService.verifyToken(resetPasswordToken, tokenTypes.RESET_PASSWORD);
     const user = await userService.getUserById(resetPasswordTokenDoc.user);
     if (!user) {
-      throw new Error();
+      throw new ApiError(httpStatus.BAD_REQUEST, 'user procession failed');
     }
     await userService.updateUserById(user.id, { password: newPassword });
     await Token.deleteMany({ user: user.id, type: tokenTypes.RESET_PASSWORD });
@@ -81,12 +81,12 @@ const verifyEmail = async (verifyEmailToken) => {
     const verifyEmailTokenDoc = await tokenService.verifyToken(verifyEmailToken, tokenTypes.VERIFY_EMAIL);
     const user = await userService.getUserById(verifyEmailTokenDoc.user);
     if (!user) {
-      throw new Error();
+      throw new ApiError(httpStatus.BAD_REQUEST, 'user procession failed');
     }
     await Token.deleteMany({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
     await userService.updateUserById(user.id, { isEmailVerified: true });
   } catch (error) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Email verification failed');
+    throw new ApiError(httpStatus.UNAUTHORIZED, `${error} Email verification failed`);
   }
 };
 
@@ -101,13 +101,15 @@ const updateProfile = async (verifyAccessToken, updateBody) => {
   try {
     const verifyAccessTokenDoc = await tokenService.verifyToken(verifyAccessToken, tokenTypes.ACCESS);
     const user = await userService.getUserById(verifyAccessTokenDoc.user);
-
-    if (!user || !updateBody) {
-      throw new Error();
+    if (!user) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'user procession failed');
+    }
+    if (!updateBody) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "body info doesn't exist");
     }
     return await userService.updateUserById(user.id, updateBody);
   } catch (error) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'User verification failed');
+    throw new ApiError(httpStatus.UNAUTHORIZED, `${error} Access toekn verification failed`);
   }
 };
 

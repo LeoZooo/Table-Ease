@@ -34,11 +34,11 @@ const getUser = async (verifyAccessToken) => {
     const verifyAccessTokenDoc = await tokenService.verifyToken(verifyAccessToken, tokenTypes.ACCESS);
     const user = await userService.getUserById(verifyAccessTokenDoc.user);
     if (!user) {
-      throw new Error();
+      throw new ApiError(httpStatus.BAD_REQUEST, 'user procession failed');
     }
     return user;
   } catch (error) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'User verification failed');
+    throw new ApiError(httpStatus.UNAUTHORIZED, `${error} Access toekn verification failed`);
   }
 };
 
@@ -52,10 +52,12 @@ const getUser = async (verifyAccessToken) => {
  */
 const registerRest = async (verifyAccessToken, restaurantBody) => {
   const user = await getUser(verifyAccessToken);
-  if (await Restaurant.isRestTaken(restaurantBody.name)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Restaurant name already taken');
+  const isRestTaken = await Restaurant.isRestTaken(restaurantBody.name);
+  const verficationCode = await restaurantBody.verficationCode;
+  if (isRestTaken) {
+    throw new ApiError(httpStatus.BAD_REQUEST, `Restaurant name '${restaurantBody.name}' already taken`);
   }
-  if ((await restaurantBody.verficationCode) !== verificationCode()) {
+  if (verficationCode !== verificationCode()) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Code verification failed');
   }
   const savedRestaurant = await Restaurant.create(restaurantBody);
@@ -75,7 +77,7 @@ const connectRest = async (verifyAccessToken, restaurantBody) => {
   const user = await getUser(verifyAccessToken);
   const restaurant = await getRestaurantByName(restaurantBody.name);
   if (!restaurant || restaurant.restaurantToken !== restaurantBody.restaurantToken) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect name or restaurantToken');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Incorrect restaurant name or token');
   }
   Object.assign(user, { restaurantId: restaurant._id });
   await user.save();
@@ -89,7 +91,7 @@ const connectRest = async (verifyAccessToken, restaurantBody) => {
 const disconnectRest = async (verifyAccessToken) => {
   const user = await getUser(verifyAccessToken);
   if (!user.restaurantId) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, "User didn't connect a restaurant");
+    throw new ApiError(httpStatus.BAD_REQUEST, "User hasn't connected a restaurant");
   }
   Object.assign(user, { restaurantId: null });
   await user.save();
@@ -107,7 +109,7 @@ const updateRestProfile = async (verifyAccessToken, restaurantBody) => {
   const user = await getUser(verifyAccessToken);
   const restaurant = await getRestaurantById(user.restaurantId);
   if (!restaurant) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, "Restaurant doesn't exist");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Restaurant doesn't exist");
   }
   Object.assign(restaurant, restaurantBody);
   await restaurant.save();
@@ -126,7 +128,7 @@ const updateRestProfile = async (verifyAccessToken, restaurantBody) => {
 const updateRest = async (restaurantBody) => {
   const restaurant = await getRestaurantByName(restaurantBody.oldName);
   if (!restaurant) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, "Restaurant doesn't exist");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Restaurant doesn't exist");
   }
   Object.assign(restaurant, restaurantBody);
   await restaurant.save();
@@ -141,7 +143,7 @@ const updateRest = async (restaurantBody) => {
 const deleteRest = async ({ name }) => {
   const restaurant = await getRestaurantByName(name);
   if (!restaurant) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Restaurant not found');
+    throw new ApiError(httpStatus.BAD_REQUEST, "Restaurant doesn't exist");
   }
   await restaurant.remove();
   return restaurant;

@@ -4,9 +4,6 @@
   "description": "Resturant online booking app",
   "bin": "bin/createNodejsApp.js",
   "main": "src/index.js",
-  "repository": "https://github.com/hagopj13/node-express-boilerplate.git",
-  "author": "Hagop Jamkojian <hagopj13@gmail.com>",
-  "license": "MIT",
   "engines": {
     "node": ">=12.0.0"
   },
