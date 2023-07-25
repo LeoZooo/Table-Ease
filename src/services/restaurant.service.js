@@ -51,6 +51,7 @@ const registerRest = async (user, updateBody) => {
   if (isRestTaken) {
     throw new ApiError(httpStatus.BAD_REQUEST, `Restaurant name '${updateBody.name}' already taken`);
   }
+  // Create a restaurant and menu within this restaurant
   const savedRestaurant = await Restaurant.create(updateBody);
   Object.assign(user, { restaurantId: savedRestaurant._id });
   await user.save();
