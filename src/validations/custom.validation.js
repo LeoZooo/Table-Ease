@@ -1,4 +1,4 @@
-const { atLeastOneNumber, atLeatOneLetter, onlyNumber, validMongoId } = require('../utils/constantRegx');
+const { atLeastOneNumber, atLeastOneLetter, onlyNumber, validMongoId } = require('../utils/constantRegx');
 
 const objectId = (value, helpers) => {
   if (!value.match(validMongoId)) {
@@ -11,7 +11,7 @@ const password = (value, helpers) => {
   if (value.length < 8) {
     return helpers.message('password must be at least 8 characters');
   }
-  if (!value.match(atLeastOneNumber) || !value.match(atLeatOneLetter)) {
+  if (!value.match(atLeastOneNumber) || !value.match(atLeastOneLetter)) {
     return helpers.message('password must contain at least 1 letter and 1 number');
   }
   return value;

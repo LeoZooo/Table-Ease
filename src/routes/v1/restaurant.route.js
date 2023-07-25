@@ -1,13 +1,16 @@
 const express = require('express');
 const validate = require('../../middlewares/validate');
+const getUser = require('../../middlewares/getUser');
 const restaurantValidation = require('../../validations/restaurant.validation');
 const restaurantController = require('../../controllers/restaurant.controller');
 
 const router = express.Router();
 
+router.use(getUser);
+router.get('/get-rest', validate(restaurantValidation.getRest), restaurantController.getRest);
 router.post('/register-rest', validate(restaurantValidation.registerRest), restaurantController.registerRest);
 router.post('/connect-rest', validate(restaurantValidation.connectRest), restaurantController.connectRest);
-router.post('/disconnect-rest', validate(restaurantValidation.disconnectRest), restaurantController.disconnectRest);
+router.delete('/disconnect-rest', validate(restaurantValidation.disconnectRest), restaurantController.disconnectRest);
 router.patch(
   '/update-rest-profile',
   validate(restaurantValidation.updateRestProfile),
@@ -22,6 +25,32 @@ module.exports = router;
  * tags:
  *   name: Rest
  *   description: Restaurant
+ */
+
+/**
+ * @swagger
+ * /rest/get-rest:
+ *   get:
+ *     summary: Get a restaurant
+ *     tags: [Rest]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The verify access token
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Restaurant'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
  */
 
 /**
@@ -71,7 +100,7 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/User'
+ *                $ref: '#/components/schemas/Restaurant'
  *       "400":
  *          $ref: '#/components/responses/BodyInfoError'
  *       "401":
@@ -118,8 +147,7 @@ module.exports = router;
  *         description: OK
  *         content:
  *           application/json:
- *             schema:
- *                $ref: '#/components/schemas/Restaurant'
+ *             $ref: '#/components/schemas/Restaurant'
  *       "400":
  *         $ref: '#/components/responses/BodyInfoError'
  *       "401":
@@ -129,7 +157,7 @@ module.exports = router;
 /**
  * @swagger
  * /rest/disconnect-rest:
- *   post:
+ *   delete:
  *     summary: Disconnect a restaurant
  *     tags: [Rest]
  *     security:
@@ -171,10 +199,6 @@ module.exports = router;
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - restaurantToken
- *               - discription
- *               - headImg
  *             properties:
  *               restaurantToken:
  *                 type: string
@@ -189,12 +213,12 @@ module.exports = router;
  *               discription: Fanshion style Janpanese restaurant located in CBD
  *               headImg: xxxxxxxxxx
  *     responses:
- *       "201":
+ *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/Restaurant'
  *       "400":
  *          $ref: '#/components/responses/BodyInfoError'
  *       "401":
@@ -217,9 +241,6 @@ module.exports = router;
  *             type: object
  *             required:
  *               - name
- *               - restaurantToken
- *               - discription
- *               - headImg
  *             properties:
  *               oldName:
  *                 type: string
@@ -242,12 +263,12 @@ module.exports = router;
  *               discription: Fanshion style Janpanese restaurant located in Downtown
  *               headImg: xxxxyyyy
  *     responses:
- *       "201":
+ *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/User'
+ *                $ref: '#/components/schemas/Restaurant'
  *       "400":
  *          $ref: '#/components/responses/BodyInfoError'
  *       "401":

@@ -311,12 +311,19 @@ module.exports = router;
  *           application/json:
  *             schema:
  *               type: object
+ *               required:
+ *                 - email
  *               properties:
+ *                 email:
+ *                   type: string
+ *                   format: email
+ *                   description: must be unique
  *                 gender:
  *                   type: number
  *                 role:
  *                   type: string
  *               example:
+ *                 email: fake@example.com
  *                 gender: 1
  *                 role: staff
  *     responses:

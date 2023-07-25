@@ -1,6 +1,12 @@
 const Joi = require('joi');
 const { restaurantToken } = require('./custom.validation');
 
+const getRest = {
+  query: Joi.object().keys({
+    token: Joi.string().required(),
+  }),
+};
+
 const registerRest = {
   query: Joi.object().keys({
     token: Joi.string().required(),
@@ -34,6 +40,7 @@ const updateRestProfile = {
   }),
   body: Joi.object()
     .keys({
+      email: Joi.string().required().email(),
       restaurantToken: Joi.string().custom(restaurantToken),
       discription: Joi.string(),
       headImg: Joi.string(),
@@ -60,6 +67,7 @@ const deleteRest = {
 };
 
 module.exports = {
+  getRest,
   registerRest,
   connectRest,
   disconnectRest,

@@ -46,6 +46,19 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
 };
 
 /**
+ * Verify access token
+ * @param {string} token
+ * @returns {Boolean}
+ */
+const verifyAccessToken = async (token) => {
+  try {
+    return jwt.verify(token, config.jwt.secret).sub;
+  } catch (error) {
+    throw new Error('Token not found');
+  }
+};
+
+/**
  * Verify token and return token doc (or throw an error if it is not valid)
  * @param {string} token
  * @param {string} type
@@ -68,7 +81,6 @@ const verifyToken = async (token, type) => {
 const generateAuthTokens = async (user) => {
   const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
   const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS);
-  await saveToken(accessToken, user.id, accessTokenExpires, tokenTypes.ACCESS);
   const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
   const refreshToken = generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH);
   await saveToken(refreshToken, user.id, refreshTokenExpires, tokenTypes.REFRESH);
@@ -117,6 +129,7 @@ module.exports = {
   generateToken,
   saveToken,
   verifyToken,
+  verifyAccessToken,
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailToken,

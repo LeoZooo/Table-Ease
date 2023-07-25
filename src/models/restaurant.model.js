@@ -26,6 +26,14 @@ const restaurantSchema = mongoose.Schema(
     headImg: {
       type: String,
     },
+    menuId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Menu',
+    },
+    orderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Order',
+    },
   },
   {
     timestamps: true,

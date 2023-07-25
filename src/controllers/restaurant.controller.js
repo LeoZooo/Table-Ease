@@ -2,23 +2,28 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { restaurantService } = require('../services');
 
+const getRest = catchAsync(async (req, res) => {
+  const restaurant = await restaurantService.getRest(req.user);
+  res.send(restaurant);
+});
+
 const registerRest = catchAsync(async (req, res) => {
-  const restaurant = await restaurantService.registerRest(req.query.token, req.body);
+  const restaurant = await restaurantService.registerRest(req.user, req.body);
   res.status(httpStatus.CREATED).send(restaurant);
 });
 
 const connectRest = catchAsync(async (req, res) => {
-  const restaurant = await restaurantService.connectRest(req.query.token, req.body);
+  const restaurant = await restaurantService.connectRest(req.user, req.body);
   res.send(restaurant);
 });
 
 const disconnectRest = catchAsync(async (req, res) => {
-  await restaurantService.disconnectRest(req.query.token);
+  await restaurantService.disconnectRest(req.user);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
 const updateRestProfile = catchAsync(async (req, res) => {
-  const restaurant = await restaurantService.updateRestProfile(req.query.token, req.body);
+  const restaurant = await restaurantService.updateRestProfile(req.user, req.body);
   res.send(restaurant);
 });
 
@@ -33,6 +38,7 @@ const deleteRest = catchAsync(async (req, res) => {
 });
 
 module.exports = {
+  getRest,
   registerRest,
   connectRest,
   disconnectRest,

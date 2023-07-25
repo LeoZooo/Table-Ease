@@ -99,17 +99,17 @@ const verifyEmail = async (verifyEmailToken) => {
  */
 const updateProfile = async (verifyAccessToken, updateBody) => {
   try {
-    const verifyAccessTokenDoc = await tokenService.verifyToken(verifyAccessToken, tokenTypes.ACCESS);
-    const user = await userService.getUserById(verifyAccessTokenDoc.user);
-    if (!user) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'user procession failed');
-    }
+    await tokenService.verifyAccessToken(verifyAccessToken);
     if (!updateBody) {
-      throw new ApiError(httpStatus.BAD_REQUEST, "body info doesn't exist");
+      throw new ApiError(httpStatus.BAD_REQUEST, 'The request is missing a valid request body');
     }
-    return await userService.updateUserById(user.id, updateBody);
+    const user = await userService.getUserByEmail(updateBody.email);
+    if (!user) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "email doesn't match or user doesn't exist");
+    }
+    return await userService.updateUserById(user._id, updateBody);
   } catch (error) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, `${error} Access toekn verification failed`);
+    throw new ApiError(httpStatus.UNAUTHORIZED, `${error}`);
   }
 };
 

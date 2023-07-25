@@ -24,12 +24,10 @@ const saveVerificationCodeToEnvFile = () => {
   const updatedEnvData = existingEnvData.replace(/^VERIFICATION_CODE=.*/m, `VERIFICATION_CODE=${newCode}`);
 
   fs.writeFileSync(filePath, updatedEnvData);
-
-  // Auto change the verfication code every 12 hours.
-  setTimeout(saveVerificationCodeToEnvFile, 1000 * 60 * 60 * 12);
 };
 
-saveVerificationCodeToEnvFile();
+// Auto change the verfication code every 12 hours.
+setInterval(saveVerificationCodeToEnvFile, 1000 * 60 * 60 * 12);
 
 const getVerificationCode = () => {
   return process.env.VERIFICATION_CODE || null;
