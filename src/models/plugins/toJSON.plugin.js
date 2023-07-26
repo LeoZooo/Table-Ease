@@ -1,4 +1,3 @@
-// 将数据库转换为自定义的json模式，删除一些不必要的信息
 /* eslint-disable no-param-reassign */
 
 /**

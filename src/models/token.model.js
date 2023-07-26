@@ -1,4 +1,3 @@
-// 定义tokenSchema
 const mongoose = require('mongoose');
 const { toJSON } = require('./plugins');
 const { tokenTypes } = require('../config/tokens');

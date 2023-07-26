@@ -12,5 +12,8 @@ yarn-error.log
 # Code coverage
 coverage
 
-# .history
+# History
 .history
+
+# DS_Store
+.DS_Store

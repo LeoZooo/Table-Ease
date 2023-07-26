@@ -1,4 +1,3 @@
-// Passport是一个用于登录验证的中间件
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 const config = require('./config');
 const { tokenTypes } = require('./tokens');

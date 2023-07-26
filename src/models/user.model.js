@@ -2,14 +2,13 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
-const { roles } = require('../config/roles');
+const { MUST_CONTAIN_NUMBER, MUST_CONTAIN_LETTER } = require('../utils/constantRegx');
 
 const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
-      // 字符串字段的前导空格和尾随空格会被自动删除
       trim: true,
     },
     email: {
@@ -30,16 +29,23 @@ const userSchema = mongoose.Schema(
       trim: true,
       minlength: 8,
       validate(value) {
-        if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
+        if (!value.match(MUST_CONTAIN_NUMBER) || !value.match(MUST_CONTAIN_LETTER)) {
           throw new Error('Password must contain at least one letter and one number');
         }
       },
       private: true, // used by the toJSON plugin
     },
+    gender: {
+      type: Number,
+      enum: [1, 2, 3, 4],
+      default: 4,
+    },
     role: {
       type: String,
-      enum: roles,
-      default: 'user',
+    },
+    restaurantId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Restaurant',
     },
     isEmailVerified: {
       type: Boolean,

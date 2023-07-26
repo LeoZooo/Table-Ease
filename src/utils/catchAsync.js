@@ -1,4 +1,3 @@
-// 处理异步函数错误的自定义中间件
 const catchAsync = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch((err) => next(err));
 };

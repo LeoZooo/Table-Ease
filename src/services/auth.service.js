@@ -42,7 +42,7 @@ const refreshAuth = async (refreshToken) => {
     const refreshTokenDoc = await tokenService.verifyToken(refreshToken, tokenTypes.REFRESH);
     const user = await userService.getUserById(refreshTokenDoc.user);
     if (!user) {
-      throw new Error();
+      throw new ApiError(httpStatus.BAD_REQUEST, 'user procession failed');
     }
     await refreshTokenDoc.remove();
     return tokenService.generateAuthTokens(user);
@@ -62,7 +62,7 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
     const resetPasswordTokenDoc = await tokenService.verifyToken(resetPasswordToken, tokenTypes.RESET_PASSWORD);
     const user = await userService.getUserById(resetPasswordTokenDoc.user);
     if (!user) {
-      throw new Error();
+      throw new ApiError(httpStatus.BAD_REQUEST, 'user procession failed');
     }
     await userService.updateUserById(user.id, { password: newPassword });
     await Token.deleteMany({ user: user.id, type: tokenTypes.RESET_PASSWORD });
@@ -81,12 +81,35 @@ const verifyEmail = async (verifyEmailToken) => {
     const verifyEmailTokenDoc = await tokenService.verifyToken(verifyEmailToken, tokenTypes.VERIFY_EMAIL);
     const user = await userService.getUserById(verifyEmailTokenDoc.user);
     if (!user) {
-      throw new Error();
+      throw new ApiError(httpStatus.BAD_REQUEST, 'user procession failed');
     }
     await Token.deleteMany({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
     await userService.updateUserById(user.id, { isEmailVerified: true });
   } catch (error) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Email verification failed');
+    throw new ApiError(httpStatus.UNAUTHORIZED, `${error} Email verification failed`);
+  }
+};
+
+/**
+ * Update profile
+ * @param {string} accessToken
+ * @param {string} gender
+ * @param {string} role
+ * @returns {Promise<User>}
+ */
+const updateProfile = async (verifyAccessToken, updateBody) => {
+  try {
+    await tokenService.verifyAccessToken(verifyAccessToken);
+    if (!updateBody) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'The request is missing a valid request body');
+    }
+    const user = await userService.getUserByEmail(updateBody.email);
+    if (!user) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "email doesn't match or user doesn't exist");
+    }
+    return await userService.updateUserById(user._id, updateBody);
+  } catch (error) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, `${error}`);
   }
 };
 
@@ -96,4 +119,5 @@ module.exports = {
   refreshAuth,
   resetPassword,
   verifyEmail,
+  updateProfile,
 };
