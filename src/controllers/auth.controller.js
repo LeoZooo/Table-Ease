@@ -1,4 +1,3 @@
-// http 状态码
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, tokenService, emailService } = require('../services');
@@ -48,6 +47,11 @@ const verifyEmail = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const updateProfile = catchAsync(async (req, res) => {
+  const user = await authService.updateProfile(req.query.token, req.body);
+  res.send(user);
+});
+
 module.exports = {
   register,
   login,
@@ -57,4 +61,5 @@ module.exports = {
   resetPassword,
   sendVerificationEmail,
   verifyEmail,
+  updateProfile,
 };

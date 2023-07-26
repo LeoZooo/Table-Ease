@@ -1,4 +1,3 @@
-// 自定义的APIERROR类
 class ApiError extends Error {
   constructor(statusCode, message, isOperational = true, stack = '') {
     super(message);

@@ -1,4 +1,3 @@
-// 发邮件
 const nodemailer = require('nodemailer');
 const config = require('../config/config');
 const logger = require('../config/logger');

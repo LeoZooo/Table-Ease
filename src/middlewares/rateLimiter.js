@@ -1,4 +1,3 @@
-// 进行请求限速
 const rateLimit = require('express-rate-limit');
 
 const authLimiter = rateLimit({

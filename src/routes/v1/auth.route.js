@@ -1,8 +1,8 @@
 const express = require('express');
 const validate = require('../../middlewares/validate');
+const auth = require('../../middlewares/auth');
 const authValidation = require('../../validations/auth.validation');
 const authController = require('../../controllers/auth.controller');
-const auth = require('../../middlewares/auth');
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.post('/forgot-password', validate(authValidation.forgotPassword), authCon
 router.post('/reset-password', validate(authValidation.resetPassword), authController.resetPassword);
 router.post('/send-verification-email', auth(), authController.sendVerificationEmail);
 router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
-
+router.patch('/update-profile', validate(authValidation.updateProfile), authController.updateProfile);
 module.exports = router;
 
 /**
@@ -288,4 +288,53 @@ module.exports = router;
  *             example:
  *               code: 401
  *               message: verify email failed
+ */
+
+/**
+ * @swagger
+ * /auth/update-profile:
+ *   patch:
+ *     summary: update profile
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The verify access token
+ *     requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               required:
+ *                 - email
+ *               properties:
+ *                 email:
+ *                   type: string
+ *                   format: email
+ *                   description: must be unique
+ *                 gender:
+ *                   type: number
+ *                 role:
+ *                   type: string
+ *               example:
+ *                 email: fake@example.com
+ *                 gender: 1
+ *                 role: staff
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: '#/components/schemas/User'
+ *       "400":
+ *         $ref: '#/components/responses/BodyInfoError'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
  */
