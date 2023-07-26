@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
-const { atLeastOneNumber } = require('../utils/constantRegx');
+const { MUST_CONTAIN_NUMBER } = require('../utils/constantRegx');
 
 const restaurantSchema = mongoose.Schema(
   {
@@ -9,7 +9,7 @@ const restaurantSchema = mongoose.Schema(
       required: true,
       length: 6,
       validate(value) {
-        if (!value.match(atLeastOneNumber)) {
+        if (!value.match(MUST_CONTAIN_NUMBER)) {
           throw new Error('token must be a six-digit number');
         }
       },
