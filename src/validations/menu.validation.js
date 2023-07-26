@@ -15,7 +15,7 @@ const addDishes = {
     description: Joi.string(),
     image: Joi.string(),
     price: Joi.number().required(),
-    feature: Joi.boolean6(),
+    feature: Joi.boolean(),
     category: Joi.string(),
   }),
 };

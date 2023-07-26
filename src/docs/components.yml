@@ -46,6 +46,29 @@ components:
         name: Japanese restaurant
         restaurantToken: '123456'
 
+    Dishes:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        price:
+          type: number
+        feature:
+          type: boolean
+        category:
+          type: string
+      example:
+        name: Salmon Sashimi
+        description: Fresh salmon shashimi with 7 pieces (15g each)
+        image: xxxxxxxxxx
+        price: 12.8
+        feature: true
+        category: Shashimi
+
     AuthTokens:
       type: object
       properties:

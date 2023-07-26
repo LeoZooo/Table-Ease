@@ -107,7 +107,7 @@ const updateRestProfile = async (user, updateBody) => {
 
 /**
  * Manage a restaurant profile by admin
- * @param {string} oldName
+ * @param {string} pastName
  * @param {string} name
  * @param {string} restaurantToken
  * @param {string} discription
@@ -115,7 +115,7 @@ const updateRestProfile = async (user, updateBody) => {
  * @returns {Promise<Restaurant>}
  */
 const updateRest = async (updateBody) => {
-  const restaurant = await getRestaurantByName(updateBody.oldName);
+  const restaurant = await getRestaurantByName(updateBody.pastName);
   const isNameToken = await getRestaurantByName(updateBody.name);
   if (!restaurant) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Restaurant doesn't exist");

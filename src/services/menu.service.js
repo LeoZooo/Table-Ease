@@ -66,7 +66,7 @@ const addDishes = async (userId, restaurant, updateBody) => {
  * @param {string} name
  * @returns {Promise<Dishes>}
  */
-const findDishes = async (menu, name) => {
+const findDishes = async (menu, { name }) => {
   const dishes = menu.dishes.find((eachDish) => eachDish.name === name);
   if (!dishes) {
     throw new ApiError(httpStatus.BAD_REQUEST, "dishe doesn't exist");
@@ -76,12 +76,12 @@ const findDishes = async (menu, name) => {
 
 /**
  * Delete dishes
- *  @param {string} userId
+ * @param {string} userId
  * @param {Promise<Menu>} menu
  * @param {string} name
  * @returns {Promise<Dishes>}
  */
-const deleteDishes = async (userId, menu, name) => {
+const deleteDishes = async (userId, menu, { name }) => {
   const dishes = await findDishes(name);
   const newDishes = menu.dishes.filter((eachDish) => eachDish !== dishes);
   const feature = dishes.feature ? menu.feature.filter((eachDish) => eachDish !== dishes) : menu.feature;
@@ -93,14 +93,13 @@ const deleteDishes = async (userId, menu, name) => {
   Object.assign(menu, { dishes: newDishes, feature, category, updateBy: userId });
   menu.save();
   await dishes.remove();
-  return dishes;
 };
 
 /**
  * Update dishes
  * @param {string} userId
  * @param {Promise<Menu>} menu
- * @param {string} noldName
+ * @param {string} pastName
  * @param {string} name
  * @param {string} description
  * @param {string} image
@@ -109,9 +108,10 @@ const deleteDishes = async (userId, menu, name) => {
  * @param {string} category
  * @returns {Promise<Dishes>}
  */
-const updateDishes = async (userId, menu, oldName, updateBody) => {
-  const dishes = await findDishes(oldName);
-  if (updateBody.name && menu.dishes.find((eachDish) => eachDish.name === updateBody.name) && oldName !== updateBody.name) {
+const updateDishes = async (userId, menu, updateBody) => {
+  const { pastName } = updateBody;
+  const dishes = await findDishes(pastName);
+  if (updateBody.name && menu.dishes.find((eachDish) => eachDish.name === updateBody.name) && pastName !== updateBody.name) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'name already exist');
   }
   Object.assign(dishes, { ...updateBody, updateBy: userId });
@@ -127,7 +127,7 @@ const updateDishes = async (userId, menu, oldName, updateBody) => {
  * @param {array} feature
  * @returns {Promise<Menu>}
  * */
-const sortFeature = async (userId, menu, feature) => {
+const sortFeature = async (userId, menu, { feature }) => {
   Object.assign(menu, { feature, updateBy: userId });
   await menu.save();
   return menu;
@@ -140,7 +140,7 @@ const sortFeature = async (userId, menu, feature) => {
  * @param {object} category
  * @returns {Promise<Menu>}
  * */
-const sortCategory = async (userId, menu, category) => {
+const sortCategory = async (userId, menu, { category }) => {
   Object.assign(menu, { category, updateBy: userId });
   await menu.save();
   return menu;
