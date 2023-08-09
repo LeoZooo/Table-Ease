@@ -40,7 +40,6 @@ const updateRestProfile = {
   }),
   body: Joi.object()
     .keys({
-      email: Joi.string().required().email(),
       restaurantToken: Joi.string().custom(restaurantToken),
       discription: Joi.string(),
       headImg: Joi.string(),

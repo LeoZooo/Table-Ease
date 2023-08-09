@@ -242,7 +242,7 @@ module.exports = router;
  *             required:
  *               - name
  *             properties:
- *               oldName:
+ *               pastName:
  *                 type: string
  *                 description: must be unique
  *               name:
@@ -257,7 +257,7 @@ module.exports = router;
  *               headImg:
  *                 type: xxxxxxxxxxxxxxx(base 64)
  *             example:
- *               oldName: Japanese restaurant
+ *               pastName: Japanese restaurant
  *               name: Sushi restaurant
  *               restaurantToken: "654321"
  *               discription: Fanshion style Janpanese restaurant located in Downtown
