@@ -85,6 +85,9 @@ const getDetailedDishes = async (menu, dishes) => {
  * @returns {Array}
  */
 const getDishes = async (menu) => {
+  if (!menu) {
+    throw new ApiError(httpStatus.BAD_REQUEST, `Menu doesn't exist`);
+  }
   let { dishes } = menu;
   dishes = await getDetailedDishes(menu, dishes);
   return dishes;
@@ -96,6 +99,9 @@ const getDishes = async (menu) => {
  * @returns {Array}
  */
 const getFeature = async (menu) => {
+  if (!menu) {
+    throw new ApiError(httpStatus.BAD_REQUEST, `Menu doesn't exist`);
+  }
   let { feature } = menu;
   feature = await getDetailedDishes(menu, feature);
   return feature;
@@ -107,6 +113,9 @@ const getFeature = async (menu) => {
  * @returns {Object}
  */
 const getCategory = async (menu) => {
+  if (!menu) {
+    throw new ApiError(httpStatus.BAD_REQUEST, `Menu doesn't exist`);
+  }
   const { category } = menu;
   const keys = Object.keys(category);
   keys.forEach(async (key) => {

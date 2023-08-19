@@ -4,6 +4,7 @@
   "description": "Resturant online booking app",
   "bin": "bin/createNodejsApp.js",
   "main": "src/index.js",
+  "license": "LEO",
   "engines": {
     "node": ">=12.0.0"
   },

@@ -90,8 +90,11 @@ module.exports = router;
  *                 type: string
  *                 length: 6
  *                 description: a six-digit number
+ *               table:
+ *                 type: number
  *             example:
  *               name: Japanese restaurant
+ *               table: 8
  *               restaurantToken: "123456"
  *               verficationCode: "111111"
  *     responses:
@@ -204,12 +207,15 @@ module.exports = router;
  *                 type: string
  *                 length: 6
  *                 description: a six-digit number
+ *               table:
+ *                 type: number
  *               discription:
  *                 type: string
  *               headImg:
  *                 type: string
  *             example:
  *               restaurantToken: "654321"
+ *               table: 12
  *               discription: Fanshion style Janpanese restaurant located in CBD
  *               headImg: xxxxxxxxxx
  *     responses:
@@ -252,6 +258,8 @@ module.exports = router;
  *                 type: string
  *                 length: 6
  *                 description: a six-digit number
+ *               table:
+ *                 type: number
  *               discription:
  *                 type: Fanshion style Janpanese restaurant located in CBD
  *               headImg:
@@ -260,6 +268,7 @@ module.exports = router;
  *               pastName: Japanese restaurant
  *               name: Sushi restaurant
  *               restaurantToken: "654321"
+ *               table: 12
  *               discription: Fanshion style Janpanese restaurant located in Downtown
  *               headImg: xxxxyyyy
  *     responses:

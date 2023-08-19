@@ -20,6 +20,10 @@ const restaurantSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
+    table: {
+      type: Number,
+      required: true,
+    },
     description: {
       type: String,
     },

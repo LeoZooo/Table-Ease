@@ -15,6 +15,7 @@ const registerRest = {
     verficationCode: Joi.string().required().custom(restaurantToken),
     restaurantToken: Joi.string().required().custom(restaurantToken),
     name: Joi.string().required(),
+    table: Joi.number().required(),
   }),
 };
 
@@ -41,6 +42,7 @@ const updateRestProfile = {
   body: Joi.object()
     .keys({
       restaurantToken: Joi.string().custom(restaurantToken),
+      table: Joi.number().required(),
       discription: Joi.string(),
       headImg: Joi.string(),
     })
@@ -50,8 +52,9 @@ const updateRestProfile = {
 const updateRest = {
   body: Joi.object()
     .keys({
-      oldName: Joi.string(),
+      pastName: Joi.string(),
       name: Joi.string(),
+      table: Joi.number().required(),
       restaurantToken: Joi.string().custom(restaurantToken),
       discription: Joi.string(),
       headImg: Joi.string(),
