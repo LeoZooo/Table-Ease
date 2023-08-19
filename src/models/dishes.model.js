@@ -59,4 +59,4 @@ dishesSchema.plugin(paginate);
  */
 const Dishes = mongoose.model('Dishes', dishesSchema);
 
-module.exports = { Dishes, dishesSchema };
+module.exports = Dishes;

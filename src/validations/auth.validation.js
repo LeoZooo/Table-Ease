@@ -22,6 +22,12 @@ const logout = {
   }),
 };
 
+const getUser = {
+  query: Joi.object().keys({
+    token: Joi.string().required(),
+  }),
+};
+
 const refreshTokens = {
   body: Joi.object().keys({
     refreshToken: Joi.string().required(),
@@ -66,6 +72,7 @@ module.exports = {
   register,
   login,
   logout,
+  getUser,
   refreshTokens,
   forgotPassword,
   resetPassword,

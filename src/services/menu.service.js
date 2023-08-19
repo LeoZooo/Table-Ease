@@ -8,24 +8,111 @@ const ApiError = require('../utils/ApiError');
  * @param {string} userId
  * @param {Promise<Menu>} menu
  * @param {Promise<Dishes>} dishes
- * @param {array} dishes
- * @param {array} feature
- * @param {object} category
- * @returns {Promise<Menu>}
  */
-const updateMenu = async (userId, menu, dishes) => {
+const updateMenu = async (userId, menu, dish) => {
   const categoryList = menu.category;
-  const newFeature = dishes.feature;
-  const newCategory = dishes.category;
+  const { name, feature, category, id } = dish;
   Object.assign(menu, {
-    dishes: [...menu.dishes, dishes],
-    feature: newFeature ? [...menu.feature, dishes] : menu.feature,
-    category: categoryList[newCategory]
-      ? { ...categoryList, newCategory: [...categoryList[newCategory], dishes] }
-      : { ...categoryList, newCategory: [dishes] },
+    dishes: menu.dishes ? [...menu.dishes, { id, name }] : [{ id, name }],
+    feature: feature ? [...menu.feature, { id, name }] : menu.feature,
+    category:
+      categoryList && categoryList[category]
+        ? { ...categoryList, [category]: [...categoryList[category], { id, name }] }
+        : { ...categoryList, [category]: [{ id, name }] },
     updateBy: userId,
   });
   await menu.save();
+};
+
+/**
+ * Delete dish in menu
+ * @param {string} userId
+ * @param {Promise<Menu>} menu
+ * @param {Promise<Dishes>} dishes
+ */
+const deleteMenu = async (userId, menu, dish) => {
+  const { name, category } = dish;
+  let menuCategory = menu.category;
+  Object.assign(menu, {
+    dishes: menu.dishes.filter((eachDish) => eachDish.name !== name),
+    feature: menu.feature.filter((eachDish) => eachDish.name !== name),
+    category: { ...menuCategory, [category]: menuCategory[category].filter((eachDish) => eachDish.name !== name) },
+    updateBy: userId,
+  });
+  // Reassign the menucategory value after modified
+  menuCategory = menu.category;
+  if (menuCategory[category].length === 0) {
+    delete menuCategory[category];
+  }
+  await menu.save();
+};
+
+/**
+ * Find dishes
+ * @param {Promise<Menu>} menu
+ * @param {string} name
+ * @returns {Promise<Dishes>}
+ */
+const findDishes = async (menu, { name }) => {
+  const dish = menu.dishes.find((eachDish) => eachDish.name === name);
+  if (!dish) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Dish doesn't exist in restaurant menu");
+  }
+  const dishes = await Dishes.findById(dish.id);
+  if (!dishes) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Dish doesn't exist in dishes database");
+  }
+  return dishes;
+};
+
+/**
+ * Get deatiled dishes
+ * @param {Array} dishes
+ * @returns {Array}
+ */
+const getDetailedDishes = async (menu, dishes) => {
+  return Promise.all(
+    dishes.map(async (eachDish) => {
+      const tmp = await findDishes(menu, eachDish);
+      return tmp;
+    })
+  );
+};
+
+/**
+ * Get dishes
+ * @param {Promise<Menu>} Menu
+ * @returns {Array}
+ */
+const getDishes = async (menu) => {
+  let { dishes } = menu;
+  dishes = await getDetailedDishes(menu, dishes);
+  return dishes;
+};
+
+/**
+ * Get feature
+ * @param {Promise<Menu>} Menu
+ * @returns {Array}
+ */
+const getFeature = async (menu) => {
+  let { feature } = menu;
+  feature = await getDetailedDishes(menu, feature);
+  return feature;
+};
+
+/**
+ * Get dishes on category
+ * @param {Promise<Menu>} Menu
+ * @returns {Object}
+ */
+const getCategory = async (menu) => {
+  const { category } = menu;
+  const keys = Object.keys(category);
+  keys.forEach(async (key) => {
+    category[key] = await getDetailedDishes(menu, category[key]);
+  });
+  return category;
 };
 
 /**
@@ -41,37 +128,26 @@ const updateMenu = async (userId, menu, dishes) => {
  * @returns {Promise<Dishes>}
  */
 const addDishes = async (userId, restaurant, updateBody) => {
-  const savedDishes = await Dishes.create({ ...updateBody, updateBy: userId });
+  let savedMenu = await Menu.findById(restaurant.menuId);
   // first time, create a menu table
-  if (!restaurant.menuId) {
-    const savedMenu = await Menu.create({
+  if (!restaurant.menuId || !savedMenu) {
+    savedMenu = await Menu.create({
       restaurantId: restaurant._id,
-      dishes: [savedDishes],
-      feature: savedDishes.feature ? [savedDishes] : [],
-      category: { newCategory: [savedDishes] },
       updateBy: userId,
     });
+
     Object.assign(restaurant, { menuId: savedMenu._id });
     await restaurant.save();
-  } else {
-    const menu = await Menu.findById(restaurant.menuId);
-    await updateMenu(userId, menu, savedDishes);
   }
-  return savedDishes;
-};
 
-/**
- * Find dishes
- * @param {Promise<Menu>} menu
- * @param {string} name
- * @returns {Promise<Dishes>}
- */
-const findDishes = async (menu, { name }) => {
-  const dishes = menu.dishes.find((eachDish) => eachDish.name === name);
-  if (!dishes) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "dishe doesn't exist");
+  // If dish name already exist in menu, throw an error
+  if (await Dishes.findOne({ menuId: restaurant.menuId, name: updateBody.name })) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Dish already exist');
   }
-  return dishes;
+
+  const savedDish = await Dishes.create({ ...updateBody, menuId: savedMenu._id, updateBy: userId });
+  await updateMenu(userId, savedMenu, savedDish);
+  return savedDish;
 };
 
 /**
@@ -82,17 +158,9 @@ const findDishes = async (menu, { name }) => {
  * @returns {Promise<Dishes>}
  */
 const deleteDishes = async (userId, menu, { name }) => {
-  const dishes = await findDishes(name);
-  const newDishes = menu.dishes.filter((eachDish) => eachDish !== dishes);
-  const feature = dishes.feature ? menu.feature.filter((eachDish) => eachDish !== dishes) : menu.feature;
-  const menuCategory = menu.category[dishes.category];
-  const category = {
-    ...menu.catgory,
-    menuCategory: menuCategory.filter((eachDish) => eachDish !== dishes),
-  };
-  Object.assign(menu, { dishes: newDishes, feature, category, updateBy: userId });
-  menu.save();
-  await dishes.remove();
+  const savedDish = await findDishes(menu, { name });
+  await deleteMenu(userId, menu, savedDish);
+  await savedDish.remove();
 };
 
 /**
@@ -110,14 +178,16 @@ const deleteDishes = async (userId, menu, { name }) => {
  */
 const updateDishes = async (userId, menu, updateBody) => {
   const { pastName } = updateBody;
-  const dishes = await findDishes(pastName);
+  const savedDish = await findDishes(menu, { name: pastName });
   if (updateBody.name && menu.dishes.find((eachDish) => eachDish.name === updateBody.name) && pastName !== updateBody.name) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'name already exist');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Name already exist');
   }
-  Object.assign(dishes, { ...updateBody, updateBy: userId });
-  await dishes.save();
-  await updateMenu(userId, menu, dishes);
-  return dishes;
+  await deleteMenu(userId, menu, savedDish);
+  Object.assign(savedDish, { ...updateBody, updateBy: userId });
+  await savedDish.save();
+  await updateMenu(userId, menu, savedDish);
+
+  return savedDish;
 };
 
 /**
@@ -147,6 +217,9 @@ const sortCategory = async (userId, menu, { category }) => {
 };
 
 module.exports = {
+  getDishes,
+  getFeature,
+  getCategory,
   addDishes,
   findDishes,
   deleteDishes,

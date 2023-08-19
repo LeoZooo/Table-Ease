@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
-const { dishesSchema } = require('./dishes.model');
 
 const menuSchema = mongoose.Schema(
   {
@@ -10,10 +9,12 @@ const menuSchema = mongoose.Schema(
       required: true,
     },
     dishes: {
-      type: [dishesSchema],
+      type: Array,
+      default: [],
     },
     feature: {
-      type: [dishesSchema],
+      type: Array,
+      default: [],
     },
     category: {
       type: Object,
