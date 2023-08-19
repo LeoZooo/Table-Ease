@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Restaurant } = require('../models');
+const { Restaurant, Order } = require('../models');
 const verificationCode = require('../utils/verificaitonCode');
 const ApiError = require('../utils/ApiError');
 
@@ -51,10 +51,15 @@ const registerRest = async (user, updateBody) => {
   if (isRestTaken) {
     throw new ApiError(httpStatus.BAD_REQUEST, `Restaurant name '${updateBody.name}' already taken`);
   }
-  // Create a restaurant and menu within this restaurant
+
+  // Create restaurant and order database
   const savedRestaurant = await Restaurant.create(updateBody);
+  const savedOrder = await Order.create({ restaurantId: savedRestaurant._id });
+
   Object.assign(user, { restaurantId: savedRestaurant._id });
+  Object.assign(savedRestaurant, { orderId: savedOrder._id });
   await user.save();
+  await savedRestaurant.save();
   return savedRestaurant;
 };
 
