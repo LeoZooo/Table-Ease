@@ -11,8 +11,11 @@ const router = express.Router();
 router.use(getUser);
 router.use(getRestaurant);
 router.use(getMenu);
+router.get('/get-dishes', validate(menuValiadation.getDishes), menuController.getDishes);
+router.get('/get-feature', validate(menuValiadation.getDishes), menuController.getFeature);
+router.get('/get-category', validate(menuValiadation.getDishes), menuController.getCategory);
 router.post('/add-dishes', validate(menuValiadation.addDishes), menuController.addDishes);
-router.get('/find-dishes', validate(menuValiadation.deleteOrFindDishes), menuController.findDishes);
+router.post('/find-dishes', validate(menuValiadation.deleteOrFindDishes), menuController.findDishes);
 router.delete('/delete-dishes', validate(menuValiadation.deleteOrFindDishes), menuController.deleteDishes);
 router.patch('/update-dishes', validate(menuValiadation.updateDishes), menuController.updateDishes);
 router.post('/sort-feature', validate(menuValiadation.sortFeature), menuController.sortFeature);
@@ -24,6 +27,84 @@ module.exports = router;
  * tags:
  *   name: Menu
  *   description: Menu and dishes
+ */
+
+/**
+ * @swagger
+ * /menu/get-dishes:
+ *   get:
+ *     summary: Get all dishes
+ *     tags: [Menu]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The verify access token
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Dishes'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+
+/**
+ * @swagger
+ * /menu/get-feature:
+ *   get:
+ *     summary: Get featured dishes
+ *     tags: [Menu]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The verify access token
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Dishes'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+
+/**
+ * @swagger
+ * /menu/get-category:
+ *   get:
+ *     summary: Get dishes on category
+ *     tags: [Menu]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The verify access token
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Dishes'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
  */
 
 /**
@@ -87,7 +168,7 @@ module.exports = router;
 /**
  * @swagger
  * /menu/find-dishes:
- *   get:
+ *   post:
  *     summary: Find a dish
  *     tags: [Menu]
  *     security:
@@ -253,6 +334,8 @@ module.exports = router;
  *             properties:
  *               feature:
  *                 type: array
+ *             example:
+ *               feature: []
  *     responses:
  *       "200":
  *         description: OK
@@ -288,6 +371,8 @@ module.exports = router;
  *             properties:
  *               category:
  *                 type: object
+ *             example:
+ *               category: {}
  *     responses:
  *       "200":
  *         description: OK

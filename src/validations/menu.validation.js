@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const getMenu = {
+const getDishes = {
   query: Joi.object().keys({
     token: Joi.string().required(),
   }),
@@ -35,11 +35,12 @@ const updateDishes = {
   }),
   body: Joi.object()
     .keys({
+      pastName: Joi.string().required(),
       name: Joi.string(),
       description: Joi.string(),
       image: Joi.string(),
       price: Joi.number(),
-      feature: Joi.string(),
+      feature: Joi.boolean(),
       category: Joi.string(),
     })
     .min(1),
@@ -64,7 +65,7 @@ const sortCategory = {
 };
 
 module.exports = {
-  getMenu,
+  getDishes,
   addDishes,
   deleteOrFindDishes,
   updateDishes,

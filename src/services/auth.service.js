@@ -33,6 +33,21 @@ const logout = async (refreshToken) => {
 };
 
 /**
+ * Get user
+ * @param {string} verifyAccessToken
+ * @returns {Promise<User>}
+ */
+const getUser = async (verifyAccessToken) => {
+  try {
+    const userId = await tokenService.verifyAccessToken(verifyAccessToken);
+    const user = await userService.getUserById(userId);
+    return user;
+  } catch (error) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, `Invalid token:${error}`);
+  }
+};
+
+/**
  * Refresh auth tokens
  * @param {string} refreshToken
  * @returns {Promise<Object>}
@@ -116,6 +131,7 @@ const updateProfile = async (verifyAccessToken, updateBody) => {
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
+  getUser,
   refreshAuth,
   resetPassword,
   verifyEmail,
