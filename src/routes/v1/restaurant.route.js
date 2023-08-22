@@ -77,7 +77,7 @@ module.exports = router;
  *             required:
  *               - name
  *               - restaurantToken
- *               - verficationCode
+ *               - verificationCode
  *             properties:
  *               name:
  *                 type: string
@@ -86,7 +86,7 @@ module.exports = router;
  *                 type: string
  *                 length: 6
  *                 description: a six-digit number
- *               verficationCode:
+ *               verificationCode:
  *                 type: string
  *                 length: 6
  *                 description: a six-digit number
@@ -96,7 +96,7 @@ module.exports = router;
  *               name: Japanese restaurant
  *               table: 8
  *               restaurantToken: "123456"
- *               verficationCode: "111111"
+ *               verificationCode: "111111"
  *     responses:
  *       "201":
  *         description: Created

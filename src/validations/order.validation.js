@@ -3,17 +3,18 @@ const { orderItem } = require('./custom.validation');
 
 const viewOrderByCustomer = {
   body: Joi.object().keys({
+    orderId: Joi.string().required(),
     orderTable: Joi.number().required(),
   }),
 };
 
 const uploadOrderByCustomer = {
   body: Joi.object().keys({
+    orderId: Joi.string().required(),
     orderTable: Joi.number().required(),
     orderItem: Joi.array().custom(orderItem),
     totalPrice: Joi.number(),
-    orderStartTime: Joi.date(),
-    lastModifyTime: Joi.date(),
+    time: Joi.date(),
     guestNote: Joi.string(),
   }),
 };
@@ -36,7 +37,7 @@ const transitionOrderToCompleted = {
   }),
   body: Joi.object().keys({
     orderTable: Joi.number().required(),
-    ordercompletedTime: Joi.date().required(),
+    orderCompletedTime: Joi.date().required(),
     type: Joi.string().required(),
     managerNote: Joi.string(),
   }),

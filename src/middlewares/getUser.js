@@ -1,7 +1,8 @@
 const httpStatus = require('http-status');
-const ApiError = require('../utils/ApiError');
+
 const tokenService = require('../services/token.service');
 const userService = require('../services/user.service');
+const ApiError = require('../utils/ApiError');
 
 const getUser = async (req, res, next) => {
   try {

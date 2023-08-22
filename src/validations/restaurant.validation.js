@@ -12,7 +12,7 @@ const registerRest = {
     token: Joi.string().required(),
   }),
   body: Joi.object().keys({
-    verficationCode: Joi.string().required().custom(restaurantToken),
+    verificationCode: Joi.string().required().custom(restaurantToken),
     restaurantToken: Joi.string().required().custom(restaurantToken),
     name: Joi.string().required(),
     table: Joi.number().required(),

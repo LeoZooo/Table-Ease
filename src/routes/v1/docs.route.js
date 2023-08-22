@@ -1,21 +1,26 @@
 const express = require('express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDefinition = require('../../docs/swaggerDef');
+const { swaggerDef, providerSwaggerDef } = require('../../docs/swaggerDef');
 
-const router = express.Router();
+const docsRouterController = (swaggerDefinition, path) => {
+  const router = express.Router();
 
-const specs = swaggerJsdoc({
-  swaggerDefinition,
-  apis: ['src/docs/*.yml', 'src/routes/v1/*.js'],
-});
+  const specs = swaggerJsdoc({
+    swaggerDefinition,
+    apis: ['src/docs/*.yml', path],
+  });
 
-router.use('/', swaggerUi.serve);
-router.get(
-  '/',
-  swaggerUi.setup(specs, {
-    explorer: true,
-  })
-);
+  router.use('/', swaggerUi.serve, (...args) =>
+    swaggerUi.setup(specs, {
+      explorer: true,
+    })(...args)
+  );
 
-module.exports = router;
+  return router;
+};
+
+const docsRoute = docsRouterController(swaggerDef, 'src/routes/v1/*.js');
+const docsProviderRoute = docsRouterController(providerSwaggerDef, 'src/routes/v1/provider/*.route.js');
+
+module.exports = { docsRoute, docsProviderRoute };

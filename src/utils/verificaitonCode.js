@@ -16,6 +16,7 @@ const generateRandomCode = (length) => {
   return code;
 };
 
+// Generate a 6 numbers code and replced to the .env file
 const saveVerificationCodeToEnvFile = () => {
   const newCode = generateRandomCode(6);
   process.env.VERIFICATION_CODE = newCode;
@@ -27,10 +28,8 @@ const saveVerificationCodeToEnvFile = () => {
 };
 
 // Auto change the verfication code every 12 hours.
-setInterval(saveVerificationCodeToEnvFile, 1000 * 60 * 60 * 12);
-
-const getVerificationCode = () => {
-  return process.env.VERIFICATION_CODE || null;
+const generateVerificationCode = () => {
+  setInterval(saveVerificationCodeToEnvFile, 1000 * 60 * 60);
 };
 
-module.exports = getVerificationCode;
+module.exports = generateVerificationCode;

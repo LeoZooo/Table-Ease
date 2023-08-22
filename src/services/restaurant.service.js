@@ -1,7 +1,9 @@
 const httpStatus = require('http-status');
-const { Restaurant, Order } = require('../models');
-const verificationCode = require('../utils/verificaitonCode');
+const config = require('../config/config');
+const { Restaurant, Orders } = require('../models');
 const ApiError = require('../utils/ApiError');
+
+const { Order } = Orders;
 
 /**
  * Get restaurant by Name
@@ -37,15 +39,18 @@ const getRest = async (user) => {
 /**
  * Register a restaurant
  * @param {string} user
- * @param {string} verficationCode
+ * @param {string} verificationCode
  * @param {string} restaurantToken
  * @param {string} name
  * @returns {Promise<Restaurant>}
  */
 const registerRest = async (user, updateBody) => {
+  if (user.restaurantId) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User already connected with a restaurant, please disconnect first');
+  }
   const isRestTaken = await Restaurant.isRestTaken(updateBody.name);
-  const verficationCode = await updateBody.verficationCode;
-  if (verficationCode !== verificationCode()) {
+  const { verificationCode } = updateBody;
+  if (verificationCode !== config.verificationCode) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Code verification failed');
   }
   if (isRestTaken) {

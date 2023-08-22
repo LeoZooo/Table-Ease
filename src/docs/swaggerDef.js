@@ -4,7 +4,7 @@ const config = require('../config/config');
 const swaggerDef = {
   openapi: '3.0.0',
   info: {
-    title: 'node-express-boilerplate API documentation',
+    title: 'Sagger API documentation',
     version,
     license: {
       name: 'MIT',
@@ -18,4 +18,13 @@ const swaggerDef = {
   ],
 };
 
-module.exports = swaggerDef;
+const providerSwaggerDef = {
+  ...swaggerDef,
+  servers: [
+    {
+      url: `http://localhost:${config.providerPort}/v1`,
+    },
+  ],
+};
+
+module.exports = { swaggerDef, providerSwaggerDef };

@@ -69,6 +69,48 @@ components:
         feature: true
         category: Shashimi
 
+    ProcessingOrder:
+      type: object
+      properties:
+        orderId:
+          type: string
+        orderTable:
+          type: number
+        orderItem:
+          type: array
+        totalPrice:
+          type: number
+        orderStartTime:
+          type: Date
+        orderCompletedTime:
+          type: Date
+        guestNote:
+          type: string
+
+    CompletedOrder:
+      type: object
+      properties:
+        orderId:
+          type: string
+        orderTable:
+          type: number
+        orderItem:
+          type: array
+        totalPrice:
+          type: number
+        orderStartTime:
+          type: Date
+        orderCompletedTime:
+          type: Date
+        ordercompletedTime:
+          type: Date
+        type:
+          type: string
+        guestNote:
+          type: string
+        managerNote:
+          type: string
+
     AuthTokens:
       type: object
       properties:

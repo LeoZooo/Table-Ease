@@ -1,37 +1,32 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 
-const orderItem = mongoose.Schema({
-  itemName: {
-    type: String,
-    required: true,
+const orderItem = [
+  {
+    itemName: {
+      type: String,
+      required: true,
+    },
+    itemPrice: {
+      type: Number,
+      required: true,
+    },
+    itemNumber: {
+      type: Number,
+      required: true,
+    },
+    specialNote: {
+      type: String,
+    },
   },
-  itemPrice: {
-    type: Number,
-    required: true,
-  },
-  itemNumber: {
-    type: Number,
-    required: true,
-  },
-  specialNote: {
-    type: String,
-  },
-});
+];
 
 const processingOrder = mongoose.Schema({
-  orderId: {
-    type: String,
-    required: true,
-  },
   orderTable: {
     type: Number,
     required: true,
   },
-  orderItem: {
-    type: [orderItem],
-    required: true,
-  },
+  orderItem,
   totalPrice: {
     type: Number,
     required: true,
@@ -40,7 +35,7 @@ const processingOrder = mongoose.Schema({
     type: Date,
     required: true,
   },
-  lastModifyTime: {
+  orderUpdatedTime: {
     type: Date,
   },
   guestNote: {
@@ -49,18 +44,11 @@ const processingOrder = mongoose.Schema({
 });
 
 const completedOrder = mongoose.Schema({
-  orderId: {
-    type: String,
-    required: true,
-  },
   orderTable: {
     type: Number,
     required: true,
   },
-  orderItem: {
-    type: [orderItem],
-    required: true,
-  },
+  orderItem,
   totalPrice: {
     type: Number,
     required: true,
@@ -69,10 +57,10 @@ const completedOrder = mongoose.Schema({
     type: Date,
     required: true,
   },
-  lastModifyTime: {
+  orderUpdatedTime: {
     type: Date,
   },
-  ordercompletedTime: {
+  orderCompletedTime: {
     type: Date,
     required: true,
   },
@@ -96,7 +84,7 @@ const orderSchema = mongoose.Schema(
       ref: 'Restaurant',
       required: true,
     },
-    precessingOrder: {
+    processingOrder: {
       type: [processingOrder],
     },
     completedOrder: {
@@ -109,12 +97,18 @@ const orderSchema = mongoose.Schema(
 );
 
 // add plugin that converts mongoose to json
+processingOrder.plugin(toJSON);
+processingOrder.plugin(paginate);
+completedOrder.plugin(toJSON);
+completedOrder.plugin(paginate);
 orderSchema.plugin(toJSON);
 orderSchema.plugin(paginate);
 
 /**
  * @typedef Order
  */
+const ProcessingOrder = mongoose.model('ProcessingOrder', processingOrder);
+const CompletedOrder = mongoose.model('CompletedOrder ', completedOrder);
 const Order = mongoose.model('Order', orderSchema);
 
-module.exports = Order;
+module.exports = { ProcessingOrder, CompletedOrder, Order };

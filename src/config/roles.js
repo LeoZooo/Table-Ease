@@ -5,7 +5,7 @@ const allRoles = {
 
 const roles = Object.keys(allRoles);
 
-// 转换为一个数组
+// Transite an Array
 const roleRights = new Map(Object.entries(allRoles));
 
 module.exports = {
