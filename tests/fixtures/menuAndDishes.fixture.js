@@ -67,9 +67,24 @@ const dishes4 = {
 const menu = {
   _id: menuId,
   restaurantId,
-  dishes: [dishes1Id, dishes2Id, dishes3Id, dishes4Id],
-  feature: [dishes1Id, dishes4Id],
-  category: { roll: [dishes2Id, dishes4Id], sashimi: [dishes4Id], other: [dishes3Id] },
+  dishes: [
+    { name: dishes1.name, id: dishes1Id },
+    { name: dishes2.name, id: dishes2Id },
+    { name: dishes3.name, id: dishes3Id },
+    { name: dishes4.name, id: dishes4Id },
+  ],
+  feature: [
+    { name: dishes1.name, id: dishes1Id },
+    { name: dishes4.name, id: dishes4Id },
+  ],
+  category: {
+    roll: [
+      { name: dishes2.name, id: dishes2Id },
+      { name: dishes4.name, id: dishes4Id },
+    ],
+    sashimi: [{ name: dishes1.name, id: dishes1Id }],
+    other: [{ name: dishes3.name, id: dishes3Id }],
+  },
   updateBy: userId,
 };
 

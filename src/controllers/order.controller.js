@@ -24,7 +24,7 @@ const getCompletedOrder = catchAsync(async (req, res) => {
 
 const transitionOrderToCompleted = catchAsync(async (req, res) => {
   const order = await orderService.transitionOrderToCompleted(req.restaurant, req.body);
-  res.send(order);
+  res.status(httpStatus.CREATED).send(order);
 });
 
 module.exports = {

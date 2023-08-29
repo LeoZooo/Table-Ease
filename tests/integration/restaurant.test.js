@@ -334,8 +334,8 @@ describe('Restaurant routes', () => {
 
       await request(app).delete('/v1/rest/delete-rest').send({ name: restaurant.name }).expect(httpStatus.NO_CONTENT);
 
-      const dbUser = await Restaurant.findById(restaurant._id);
-      expect(dbUser).toBeNull();
+      const dbRestaurant = await Restaurant.findById(restaurant._id);
+      expect(dbRestaurant).toBeNull();
     });
 
     test(`should return 400 if restaurant name doesn't exist`, async () => {

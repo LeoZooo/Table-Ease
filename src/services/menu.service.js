@@ -62,7 +62,7 @@ const findDishes = async (menu, { name }) => {
   if (!dishes) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Dish doesn't exist in dishes database");
   }
-  return dishes;
+  return { dishes };
 };
 
 /**
@@ -90,7 +90,7 @@ const getDishes = async (menu) => {
   }
   let { dishes } = menu;
   dishes = await getDetailedDishes(menu, dishes);
-  return dishes;
+  return { dishes };
 };
 
 /**
@@ -104,7 +104,7 @@ const getFeature = async (menu) => {
   }
   let { feature } = menu;
   feature = await getDetailedDishes(menu, feature);
-  return feature;
+  return { feature };
 };
 
 /**
@@ -121,7 +121,7 @@ const getCategory = async (menu) => {
   keys.forEach(async (key) => {
     category[key] = await getDetailedDishes(menu, category[key]);
   });
-  return category;
+  return { category };
 };
 
 /**
@@ -156,7 +156,7 @@ const addDishes = async (userId, restaurant, updateBody) => {
 
   const savedDish = await Dishes.create({ ...updateBody, menuId: savedMenu._id, updateBy: userId });
   await updateMenu(userId, savedMenu, savedDish);
-  return savedDish;
+  return { dishes: savedDish };
 };
 
 /**
@@ -167,7 +167,9 @@ const addDishes = async (userId, restaurant, updateBody) => {
  * @returns {Promise<Dishes>}
  */
 const deleteDishes = async (userId, menu, { name }) => {
-  const savedDish = await findDishes(menu, { name });
+  let savedDish = await findDishes(menu, { name });
+  savedDish = savedDish.dishes;
+
   await deleteMenu(userId, menu, savedDish);
   await savedDish.remove();
 };
@@ -187,7 +189,9 @@ const deleteDishes = async (userId, menu, { name }) => {
  */
 const updateDishes = async (userId, menu, updateBody) => {
   const { pastName } = updateBody;
-  const savedDish = await findDishes(menu, { name: pastName });
+  let savedDish = await findDishes(menu, { name: pastName });
+  savedDish = savedDish.dishes;
+
   if (updateBody.name && menu.dishes.find((eachDish) => eachDish.name === updateBody.name) && pastName !== updateBody.name) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Name already exist');
   }
@@ -196,7 +200,7 @@ const updateDishes = async (userId, menu, updateBody) => {
   await savedDish.save();
   await updateMenu(userId, menu, savedDish);
 
-  return savedDish;
+  return { dishes: savedDish };
 };
 
 /**
@@ -209,7 +213,7 @@ const updateDishes = async (userId, menu, updateBody) => {
 const sortFeature = async (userId, menu, { feature }) => {
   Object.assign(menu, { feature, updateBy: userId });
   await menu.save();
-  return menu;
+  return { menu };
 };
 
 /**
@@ -222,7 +226,7 @@ const sortFeature = async (userId, menu, { feature }) => {
 const sortCategory = async (userId, menu, { category }) => {
   Object.assign(menu, { category, updateBy: userId });
   await menu.save();
-  return menu;
+  return { menu };
 };
 
 module.exports = {

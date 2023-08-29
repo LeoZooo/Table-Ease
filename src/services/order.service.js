@@ -29,11 +29,12 @@ const getOrder = async (orderId) => {
 const viewOrderByCustomer = async (updateBody) => {
   const { orderId, orderTable } = updateBody;
   const order = await getOrder(orderId);
+
   const savedOrder = order.processingOrder.find((each) => each.orderTable === orderTable);
   if (!savedOrder) {
     throw new ApiError(httpStatus.BAD_REQUEST, `Order ID '${orderId}' doesn't have order on table ${orderTable}`);
   }
-  return savedOrder;
+  return { order: savedOrder };
 };
 
 /**
@@ -48,6 +49,7 @@ const viewOrderByCustomer = async (updateBody) => {
 const uploadOrderByCustomer = async (updateBody) => {
   const { orderId, orderTable, time } = updateBody;
   const order = await getOrder(orderId);
+
   let savedOrder = order.processingOrder.find((each) => each.orderTable === orderTable);
 
   // If order already exist
@@ -58,8 +60,8 @@ const uploadOrderByCustomer = async (updateBody) => {
     connectQueueCustomer(`You have an updated order at TABLE ${orderTable}.`);
   } else {
     const orderStartTime = time;
-
     savedOrder = await ProcessingOrder.create({ ...updateBody, orderStartTime });
+
     order.processingOrder.push(savedOrder);
     await order.save();
     connectQueueCustomer(`You have an new order at TABLE ${orderTable}.`);
@@ -78,7 +80,7 @@ const getProcessingOrder = async (restaurant) => {
   if (!processingOrder) {
     throw new ApiError(httpStatus.BAD_REQUEST, `Order '${orderId}' doesn't have processing order`);
   }
-  return processingOrder;
+  return { processingOrder };
 };
 
 /**
@@ -93,7 +95,7 @@ const getCompletedOrder = async (restaurant) => {
   if (!completedOrder) {
     throw new ApiError(httpStatus.BAD_REQUEST, `Order '${orderId}' doesn't have processing order`);
   }
-  return completedOrder;
+  return { completedOrder };
 };
 
 /**
@@ -120,9 +122,9 @@ const transitionOrderToCompleted = async (restaurant, updateBody) => {
 
   order.processingOrder = order.processingOrder.find((each) => each.orderTable !== orderTable);
   await order.save();
-  await ProcessingOrder.findById(savedOrder._id).remove();
+  await ProcessingOrder.findById(savedOrder._id).deleteOne();
 
-  return completedOrder;
+  return { order: completedOrder };
 };
 
 module.exports = {
