@@ -4,7 +4,7 @@ const httpStatus = require('http-status');
 const httpMocks = require('node-mocks-http');
 const moment = require('moment');
 const bcrypt = require('bcryptjs');
-const app = require('../../src/app');
+const { app } = require('../../src/app');
 const config = require('../../src/config/config');
 const auth = require('../../src/middlewares/auth');
 const { tokenService, emailService } = require('../../src/services');
@@ -13,8 +13,8 @@ const setupTestDB = require('../utils/setupTestDB');
 const { User, Token } = require('../../src/models');
 const { roleRights } = require('../../src/config/roles');
 const { tokenTypes } = require('../../src/config/tokens');
-const { userOne, admin, insertUsers } = require('../fixtures/user.fixture');
-const { userOneAccessToken, adminAccessToken } = require('../fixtures/token.fixture');
+const { userOne, userThree, insertUsers } = require('../fixtures/user.fixture');
+const { userOneAccessToken, userThreeAccessToken } = require('../fixtures/token.fixture');
 
 setupTestDB();
 
@@ -37,14 +37,15 @@ describe('Auth routes', () => {
         id: expect.anything(),
         name: newUser.name,
         email: newUser.email,
-        role: 'user',
+        role: 'staff',
+        gender: 4,
         isEmailVerified: false,
       });
 
       const dbUser = await User.findById(res.body.user.id);
       expect(dbUser).toBeDefined();
       expect(dbUser.password).not.toBe(newUser.password);
-      expect(dbUser).toMatchObject({ name: newUser.name, email: newUser.email, role: 'user', isEmailVerified: false });
+      expect(dbUser).toMatchObject({ name: newUser.name, email: newUser.email, isEmailVerified: false });
 
       expect(res.body.tokens).toEqual({
         access: { token: expect.anything(), expires: expect.anything() },
@@ -96,7 +97,8 @@ describe('Auth routes', () => {
         id: expect.anything(),
         name: userOne.name,
         email: userOne.email,
-        role: userOne.role,
+        gender: 4,
+        role: 'staff',
         isEmailVerified: userOne.isEmailVerified,
       });
 
@@ -451,6 +453,61 @@ describe('Auth routes', () => {
         .expect(httpStatus.UNAUTHORIZED);
     });
   });
+
+  describe('PATCH /v1/auth/update-profile', () => {
+    test('should return 200 and update if data is vaule', async () => {
+      await insertUsers([userOne]);
+      const updateProfile = {
+        email: userOne.email,
+        name: 'abc',
+        gender: 1,
+        role: 'staff',
+      };
+
+      const res = await request(app)
+        .patch('/v1/auth/update-profile')
+        .query({ token: userOneAccessToken })
+        .send(updateProfile)
+        .expect(httpStatus.OK);
+
+      expect(res.body.user).toEqual({
+        id: expect.anything(),
+        name: updateProfile.name,
+        email: userOne.email,
+        gender: updateProfile.gender,
+        role: updateProfile.role,
+        isEmailVerified: userOne.isEmailVerified,
+      });
+    });
+    test('should return 400 if email address is missing', async () => {
+      await insertUsers([userOne]);
+      const updateProfile = {
+        name: 'abc',
+        gender: 1,
+        role: 'staff',
+      };
+
+      await request(app)
+        .patch('/v1/auth/update-profile')
+        .query({ token: userOneAccessToken })
+        .send(updateProfile)
+        .expect(httpStatus.BAD_REQUEST);
+    });
+    test('should return 400 if update info is wrong', async () => {
+      await insertUsers([userOne]);
+      const updateProfile = {
+        name: 'abc',
+        gender: 0,
+        role: 'manager',
+      };
+
+      await request(app)
+        .patch('/v1/auth/update-profile')
+        .query({ token: userOneAccessToken })
+        .send(updateProfile)
+        .expect(httpStatus.BAD_REQUEST);
+    });
+  });
 });
 
 describe('Auth middleware', () => {
@@ -573,9 +630,9 @@ describe('Auth middleware', () => {
   });
 
   test('should call next with no errors if user has required rights', async () => {
-    await insertUsers([admin]);
+    await insertUsers([userThree]);
     const req = httpMocks.createRequest({
-      headers: { Authorization: `Bearer ${adminAccessToken}` },
+      headers: { Authorization: `Bearer ${userThreeAccessToken}` },
       params: { userId: userOne._id.toHexString() },
     });
     const next = jest.fn();

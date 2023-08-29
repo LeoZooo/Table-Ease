@@ -9,7 +9,8 @@ describe('User model', () => {
         name: faker.name.findName(),
         email: faker.internet.email().toLowerCase(),
         password: 'password1',
-        role: 'user',
+        gender: 1,
+        role: 'staff',
       };
     });
 
@@ -37,8 +38,13 @@ describe('User model', () => {
       await expect(new User(newUser).validate()).rejects.toThrow();
     });
 
-    test('should throw a validation error if role is unknown', async () => {
+    test('should throw a validation error if role is wrong', async () => {
       newUser.role = 'invalid';
+      await expect(new User(newUser).validate()).rejects.toThrow();
+    });
+
+    test('should throw a validation error if gender is wrong', async () => {
+      newUser.gender = 0;
       await expect(new User(newUser).validate()).rejects.toThrow();
     });
   });

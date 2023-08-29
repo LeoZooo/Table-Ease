@@ -27,8 +27,29 @@ const restaurantToken = (value, helpers) => {
   return value;
 };
 
+const orderItem = (value, helpers) => {
+  if (value.length === 0) {
+    return helpers.message('order items must have or more than one');
+  }
+
+  const allowedKeys = ['itemName', 'itemPrice', 'itemNumber', 'specialNote'];
+  value.map((each) => {
+    if (!each.itemName || !each.itemPrice || !each.itemNumber) {
+      return helpers.message(`order items don't include key feature`);
+    }
+    const key = Object.keys(each);
+    if (!allowedKeys.includes(key)) {
+      return helpers.message('order items have not allowed key');
+    }
+    return each;
+  });
+
+  return value;
+};
+
 module.exports = {
   objectId,
   password,
   restaurantToken,
+  orderItem,
 };

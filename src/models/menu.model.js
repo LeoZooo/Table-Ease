@@ -18,6 +18,7 @@ const menuSchema = mongoose.Schema(
     },
     category: {
       type: Object,
+      default: {},
     },
     updateBy: {
       type: mongoose.Schema.Types.ObjectId,

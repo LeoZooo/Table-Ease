@@ -115,14 +115,16 @@ const verifyEmail = async (verifyEmailToken) => {
 const updateProfile = async (verifyAccessToken, updateBody) => {
   try {
     await tokenService.verifyAccessToken(verifyAccessToken);
-    if (!updateBody) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'The request is missing a valid request body');
+
+    if (!updateBody || !updateBody.email) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'The request is missing a valid request body or email address');
     }
     const user = await userService.getUserByEmail(updateBody.email);
     if (!user) {
       throw new ApiError(httpStatus.BAD_REQUEST, "email doesn't match or user doesn't exist");
     }
-    return await userService.updateUserById(user._id, updateBody);
+    const updatedUser = await userService.updateUserById(user._id, updateBody);
+    return updatedUser;
   } catch (error) {
     throw new ApiError(httpStatus.UNAUTHORIZED, `${error}`);
   }

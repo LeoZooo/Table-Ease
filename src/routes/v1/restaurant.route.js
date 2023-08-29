@@ -77,7 +77,7 @@ module.exports = router;
  *             required:
  *               - name
  *               - restaurantToken
- *               - verficationCode
+ *               - verificationCode
  *             properties:
  *               name:
  *                 type: string
@@ -86,14 +86,17 @@ module.exports = router;
  *                 type: string
  *                 length: 6
  *                 description: a six-digit number
- *               verficationCode:
+ *               verificationCode:
  *                 type: string
  *                 length: 6
  *                 description: a six-digit number
+ *               table:
+ *                 type: number
  *             example:
  *               name: Japanese restaurant
+ *               table: 8
  *               restaurantToken: "123456"
- *               verficationCode: "111111"
+ *               verificationCode: "111111"
  *     responses:
  *       "201":
  *         description: Created
@@ -204,13 +207,16 @@ module.exports = router;
  *                 type: string
  *                 length: 6
  *                 description: a six-digit number
- *               discription:
+ *               table:
+ *                 type: number
+ *               description:
  *                 type: string
  *               headImg:
  *                 type: string
  *             example:
  *               restaurantToken: "654321"
- *               discription: Fanshion style Janpanese restaurant located in CBD
+ *               table: 12
+ *               description: Fanshion style Janpanese restaurant located in CBD
  *               headImg: xxxxxxxxxx
  *     responses:
  *       "200":
@@ -252,7 +258,9 @@ module.exports = router;
  *                 type: string
  *                 length: 6
  *                 description: a six-digit number
- *               discription:
+ *               table:
+ *                 type: number
+ *               description:
  *                 type: Fanshion style Janpanese restaurant located in CBD
  *               headImg:
  *                 type: xxxxxxxxxxxxxxx(base 64)
@@ -260,7 +268,8 @@ module.exports = router;
  *               pastName: Japanese restaurant
  *               name: Sushi restaurant
  *               restaurantToken: "654321"
- *               discription: Fanshion style Janpanese restaurant located in Downtown
+ *               table: 12
+ *               description: Fanshion style Janpanese restaurant located in Downtown
  *               headImg: xxxxyyyy
  *     responses:
  *       "200":

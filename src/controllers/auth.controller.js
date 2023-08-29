@@ -54,7 +54,7 @@ const verifyEmail = catchAsync(async (req, res) => {
 
 const updateProfile = catchAsync(async (req, res) => {
   const user = await authService.updateProfile(req.query.token, req.body);
-  res.send(user);
+  res.send({ user });
 });
 
 module.exports = {

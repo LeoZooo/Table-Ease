@@ -1,7 +1,9 @@
 const httpStatus = require('http-status');
-const { Restaurant } = require('../models');
-const verificationCode = require('../utils/verificaitonCode');
+const config = require('../config/config');
+const { Restaurant, Orders } = require('../models');
 const ApiError = require('../utils/ApiError');
+
+const { Order } = Orders;
 
 /**
  * Get restaurant by Name
@@ -37,25 +39,33 @@ const getRest = async (user) => {
 /**
  * Register a restaurant
  * @param {string} user
- * @param {string} verficationCode
+ * @param {string} verificationCode
  * @param {string} restaurantToken
  * @param {string} name
  * @returns {Promise<Restaurant>}
  */
 const registerRest = async (user, updateBody) => {
+  if (user.restaurantId) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User already connected with a restaurant, please disconnect first');
+  }
   const isRestTaken = await Restaurant.isRestTaken(updateBody.name);
-  const verficationCode = await updateBody.verficationCode;
-  if (verficationCode !== verificationCode()) {
+  const { verificationCode } = updateBody;
+  if (verificationCode !== config.verificationCode) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Code verification failed');
   }
   if (isRestTaken) {
     throw new ApiError(httpStatus.BAD_REQUEST, `Restaurant name '${updateBody.name}' already taken`);
   }
-  // Create a restaurant and menu within this restaurant
+
+  // Create restaurant and order database
   const savedRestaurant = await Restaurant.create(updateBody);
+  const savedOrder = await Order.create({ restaurantId: savedRestaurant._id });
+
   Object.assign(user, { restaurantId: savedRestaurant._id });
+  Object.assign(savedRestaurant, { orderId: savedOrder._id });
   await user.save();
-  return savedRestaurant;
+  await savedRestaurant.save();
+  return { restaurant: savedRestaurant };
 };
 
 /**
@@ -66,13 +76,16 @@ const registerRest = async (user, updateBody) => {
  * @returns {Promise<Restaurant>}
  */
 const connectRest = async (user, updateBody) => {
+  if (user.restaurantId) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User already connected with a restaurant, please disconnect first');
+  }
   const restaurant = await getRestaurantByName(updateBody.name);
   if (!restaurant || restaurant.restaurantToken !== updateBody.restaurantToken) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Incorrect restaurant name or token');
   }
   Object.assign(user, { restaurantId: restaurant._id });
   await user.save();
-  return restaurant;
+  return { restaurant };
 };
 
 /**
@@ -91,7 +104,7 @@ const disconnectRest = async (user) => {
  * Manage a restaurant profile by user
  * @param {string} user
  * @param {string} restaurantToken
- * @param {string} discription
+ * @param {string} description
  * @param {string} headImg
  * @returns {Promise<Restaurant>}
  */
@@ -102,7 +115,7 @@ const updateRestProfile = async (user, updateBody) => {
   }
   Object.assign(restaurant, updateBody);
   await restaurant.save();
-  return restaurant;
+  return { restaurant };
 };
 
 /**
@@ -110,7 +123,7 @@ const updateRestProfile = async (user, updateBody) => {
  * @param {string} pastName
  * @param {string} name
  * @param {string} restaurantToken
- * @param {string} discription
+ * @param {string} description
  * @param {string} headImg
  * @returns {Promise<Restaurant>}
  */
@@ -125,7 +138,7 @@ const updateRest = async (updateBody) => {
   }
   Object.assign(restaurant, updateBody);
   await restaurant.save();
-  return restaurant;
+  return { restaurant };
 };
 
 /**
@@ -139,7 +152,7 @@ const deleteRest = async ({ name }) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Restaurant doesn't exist");
   }
   await restaurant.remove();
-  return restaurant;
+  return { restaurant };
 };
 
 module.exports = {
