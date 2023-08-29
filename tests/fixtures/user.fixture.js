@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const faker = require('faker');
 const User = require('../../src/models/user.model');
 
+// Generate hased passwd with salt
 const password = 'password1';
 const salt = bcrypt.genSaltSync(8);
 const hashedPassword = bcrypt.hashSync(password, salt);
@@ -12,7 +13,6 @@ const userOne = {
   name: faker.name.findName(),
   email: faker.internet.email().toLowerCase(),
   password,
-  role: 'user',
   isEmailVerified: false,
 };
 
@@ -21,15 +21,17 @@ const userTwo = {
   name: faker.name.findName(),
   email: faker.internet.email().toLowerCase(),
   password,
-  role: 'user',
+  gender: '2',
+  role: 'manager',
   isEmailVerified: false,
 };
 
-const admin = {
+const userThree = {
   _id: mongoose.Types.ObjectId(),
   name: faker.name.findName(),
   email: faker.internet.email().toLowerCase(),
   password,
+  gender: '3',
   role: 'admin',
   isEmailVerified: false,
 };
@@ -41,6 +43,6 @@ const insertUsers = async (users) => {
 module.exports = {
   userOne,
   userTwo,
-  admin,
+  userThree,
   insertUsers,
 };

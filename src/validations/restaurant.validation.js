@@ -43,7 +43,7 @@ const updateRestProfile = {
     .keys({
       restaurantToken: Joi.string().custom(restaurantToken),
       table: Joi.number().required(),
-      discription: Joi.string(),
+      description: Joi.string(),
       headImg: Joi.string(),
     })
     .min(1),
@@ -56,7 +56,7 @@ const updateRest = {
       name: Joi.string(),
       table: Joi.number().required(),
       restaurantToken: Joi.string().custom(restaurantToken),
-      discription: Joi.string(),
+      description: Joi.string(),
       headImg: Joi.string(),
     })
     .min(1),

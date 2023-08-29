@@ -65,7 +65,7 @@ const registerRest = async (user, updateBody) => {
   Object.assign(savedRestaurant, { orderId: savedOrder._id });
   await user.save();
   await savedRestaurant.save();
-  return savedRestaurant;
+  return { restaurant: savedRestaurant };
 };
 
 /**
@@ -76,13 +76,16 @@ const registerRest = async (user, updateBody) => {
  * @returns {Promise<Restaurant>}
  */
 const connectRest = async (user, updateBody) => {
+  if (user.restaurantId) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User already connected with a restaurant, please disconnect first');
+  }
   const restaurant = await getRestaurantByName(updateBody.name);
   if (!restaurant || restaurant.restaurantToken !== updateBody.restaurantToken) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Incorrect restaurant name or token');
   }
   Object.assign(user, { restaurantId: restaurant._id });
   await user.save();
-  return restaurant;
+  return { restaurant };
 };
 
 /**
@@ -101,7 +104,7 @@ const disconnectRest = async (user) => {
  * Manage a restaurant profile by user
  * @param {string} user
  * @param {string} restaurantToken
- * @param {string} discription
+ * @param {string} description
  * @param {string} headImg
  * @returns {Promise<Restaurant>}
  */
@@ -112,7 +115,7 @@ const updateRestProfile = async (user, updateBody) => {
   }
   Object.assign(restaurant, updateBody);
   await restaurant.save();
-  return restaurant;
+  return { restaurant };
 };
 
 /**
@@ -120,7 +123,7 @@ const updateRestProfile = async (user, updateBody) => {
  * @param {string} pastName
  * @param {string} name
  * @param {string} restaurantToken
- * @param {string} discription
+ * @param {string} description
  * @param {string} headImg
  * @returns {Promise<Restaurant>}
  */
@@ -135,7 +138,7 @@ const updateRest = async (updateBody) => {
   }
   Object.assign(restaurant, updateBody);
   await restaurant.save();
-  return restaurant;
+  return { restaurant };
 };
 
 /**
@@ -149,7 +152,7 @@ const deleteRest = async ({ name }) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Restaurant doesn't exist");
   }
   await restaurant.remove();
-  return restaurant;
+  return { restaurant };
 };
 
 module.exports = {

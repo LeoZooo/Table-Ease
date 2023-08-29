@@ -25,11 +25,13 @@ const saveVerificationCodeToEnvFile = () => {
   const updatedEnvData = existingEnvData.replace(/^VERIFICATION_CODE=.*/m, `VERIFICATION_CODE=${newCode}`);
 
   fs.writeFileSync(filePath, updatedEnvData);
+
+  return newCode;
 };
 
 // Auto change the verfication code every 12 hours.
-const generateVerificationCode = () => {
-  setInterval(saveVerificationCodeToEnvFile, 1000 * 60 * 60);
+const generateVerificationCode = (time) => {
+  return setInterval(saveVerificationCodeToEnvFile, time);
 };
 
 module.exports = generateVerificationCode;

@@ -62,6 +62,7 @@ const updateProfile = {
   body: Joi.object()
     .keys({
       email: Joi.string().required().email(),
+      name: Joi.string(),
       gender: Joi.number(),
       role: Joi.string(),
     })

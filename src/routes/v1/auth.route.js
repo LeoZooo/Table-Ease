@@ -345,12 +345,15 @@ module.exports = router;
  *                   type: string
  *                   format: email
  *                   description: must be unique
+ *                 name:
+ *                   type: string
  *                 gender:
  *                   type: number
  *                 role:
  *                   type: string
  *               example:
  *                 email: fake@example.com
+ *                 name: abc
  *                 gender: 1
  *                 role: staff
  *     responses:

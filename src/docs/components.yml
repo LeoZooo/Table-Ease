@@ -42,9 +42,9 @@ components:
         restaurantToken:
           type: string
       example:
-        email: fake@example.com
-        name: Japanese restaurant
         restaurantToken: '123456'
+        name: Japanese restaurant
+        table: 8
 
     Dishes:
       type: object

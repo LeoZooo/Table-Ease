@@ -9,7 +9,7 @@ const restaurantSchema = mongoose.Schema(
       required: true,
       length: 6,
       validate(value) {
-        if (!value.match(MUST_CONTAIN_NUMBER)) {
+        if (!value.match(MUST_CONTAIN_NUMBER) || value.length !== 6) {
           throw new Error('token must be a six-digit number');
         }
       },
@@ -23,6 +23,11 @@ const restaurantSchema = mongoose.Schema(
     table: {
       type: Number,
       required: true,
+      validate(value) {
+        if (value <= 0) {
+          throw new Error('Table number must be more than 0');
+        }
+      },
     },
     description: {
       type: String,

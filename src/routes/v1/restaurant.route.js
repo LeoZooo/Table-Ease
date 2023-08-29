@@ -209,14 +209,14 @@ module.exports = router;
  *                 description: a six-digit number
  *               table:
  *                 type: number
- *               discription:
+ *               description:
  *                 type: string
  *               headImg:
  *                 type: string
  *             example:
  *               restaurantToken: "654321"
  *               table: 12
- *               discription: Fanshion style Janpanese restaurant located in CBD
+ *               description: Fanshion style Janpanese restaurant located in CBD
  *               headImg: xxxxxxxxxx
  *     responses:
  *       "200":
@@ -260,7 +260,7 @@ module.exports = router;
  *                 description: a six-digit number
  *               table:
  *                 type: number
- *               discription:
+ *               description:
  *                 type: Fanshion style Janpanese restaurant located in CBD
  *               headImg:
  *                 type: xxxxxxxxxxxxxxx(base 64)
@@ -269,7 +269,7 @@ module.exports = router;
  *               name: Sushi restaurant
  *               restaurantToken: "654321"
  *               table: 12
- *               discription: Fanshion style Janpanese restaurant located in Downtown
+ *               description: Fanshion style Janpanese restaurant located in Downtown
  *               headImg: xxxxyyyy
  *     responses:
  *       "200":

@@ -45,5 +45,5 @@ const serverController = (port, App) => {
 serverController(config.port, app);
 serverController(config.providerPort, providerApp);
 
-generateVerificationCode();
+generateVerificationCode(1000 * 60 * 60);
 connectQueueClient();
